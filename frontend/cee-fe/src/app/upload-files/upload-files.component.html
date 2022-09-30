@@ -1,16 +1,17 @@
 <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
-<div class="margin">
+<div class="container">
+    <img src="/assets/logo.png" alt="image">
     <div class="margin">
         <label for="upload">
-            <button mat-raised-button color="primary" [disabled]="loading" (click)="fileUpload.click()"  >Upload3</button>
-            <input type="file" id="upload" multiple style="display:none" (change)="onUpload($event)" #fileUpload>
+            <button mat-raised-button color="primary" [disabled]="loading" (click)="fileUpload.click()"  >Select files</button>
+            <input type="file" id="upload" multiple [hidden]="true" (change)="onUpload($event)" #fileUpload>
         </label>
     </div>
     <mat-divider class="padding"></mat-divider>
-    <div *ngIf="fileName.length==0">
+    <div *ngIf="msgs.length==0">
     {{"No file uploaded yet."}}
     </div>
-    <div *ngIf="fileName.length!=0">
-        <div *ngFor="let name of fileName">{{name}}</div>
+    <div *ngIf="msgs.length!=0">
+        <div *ngFor="let msg of msgs">{{msg}}</div>
     </div>
 </div>

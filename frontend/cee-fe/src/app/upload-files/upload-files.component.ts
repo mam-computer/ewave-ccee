@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UploadFilesService } from './upload-files.service';
 
-import { Observable } from 'rxjs';
-import { forkJoin } from 'rxjs';
-
 @Component({
   selector: 'app-upload-files',
   templateUrl: './upload-files.component.html',
@@ -11,11 +8,8 @@ import { forkJoin } from 'rxjs';
 })
 export class UploadFilesComponent implements OnInit {
 
-  // Variable to store shortLink from api response
-  shortLink: string = "";
-  loading: boolean = false; // Flag variable
-  file: File[] = []; // Variable to store file
-  fileName = [];
+  loading: boolean = false;
+  msgs: String[] = [];
 
   // Inject service 
   constructor(private fileUploadService: UploadFilesService) { }
@@ -25,15 +19,20 @@ export class UploadFilesComponent implements OnInit {
 
   // OnClick of button Upload
   onUpload(event: any) {
-      const tasks: Observable<any>[] = [];
-      this.loading = !this.loading;
+      this.msgs = [];
       Array.from<File>(event.target.files).forEach(element => {
-        this.file.push(element);
-        this.fileName.push(element.name);
-        console.log(element);
-        tasks.push(this.fileUploadService.upload(element));
-          
+        this.msgs.push("Processing file " + element.name);
       }); 
-    forkJoin(tasks).subscribe(results => { console.log(results); this.loading = false; });
+      this.loading = !this.loading;
+      this.fileUploadService.processXMLFiles(event.target.files).subscribe({
+        next:result => { this.msgs.push(result); },
+        error: err => { console.error("Error: " + err) },
+        complete: () => this.loading = false
+      });
+
+      // Clear input file component to allow select same file again
+      if (event.target) {
+        event.target.value=null;
+      }
   }
 }
